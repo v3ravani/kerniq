@@ -16,6 +16,7 @@ import psutil
 from kerniq.exceptions import ProcessError, TaskNotFoundError
 from kerniq.metrics import ProcessTreeMetrics, ThresholdEvaluator
 from kerniq.notifications import NotificationService
+from kerniq.proc_tree import ProcessTreeTracker
 from kerniq.storage import Storage
 
 PROMPT_REGEX = re.compile(
@@ -137,13 +138,7 @@ class TaskSupervisor:
             )
             raise ProcessError(f"Failed to launch process '{command_args[0]}': {err_msg}")
 
-        # Update status to running with real PID
-        with self._lock:
-            self._active_processes[task_id] = proc
-        self.storage.update_task_status(task_id, status="running", pid=proc.pid)
-
-        # Start ProcessTreeTracker
-        from kerniq.proc_tree import ProcessTreeTracker
+        # Start ProcessTreeTracker immediately to capture short-lived child processes
         tree_tracker: Optional[ProcessTreeTracker] = None
         try:
             tree_tracker = ProcessTreeTracker(
@@ -155,6 +150,11 @@ class TaskSupervisor:
             tree_tracker.start()
         except Exception:
             tree_tracker = None
+
+        # Update status to running with real PID
+        with self._lock:
+            self._active_processes[task_id] = proc
+        self.storage.update_task_status(task_id, status="running", pid=proc.pid)
 
         # Send task started notification
         self.notifications.notify_task_started(

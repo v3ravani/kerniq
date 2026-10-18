@@ -85,7 +85,7 @@ class ProcessTreeTracker:
         task_id: str,
         storage: Optional[Any] = None,
         output_dir: Optional[Path] = None,
-        sampling_interval: float = 0.05
+        sampling_interval: float = 0.02
     ):
         self.root_pid = root_pid
         self.task_id = task_id
@@ -174,6 +174,10 @@ class ProcessTreeTracker:
 
     def start(self) -> None:
         """Start the background tracking loop."""
+        try:
+            self.sample()
+        except Exception:
+            pass
         self._thread = threading.Thread(target=self._run_loop, name=f"proc-tree-{self.task_id}", daemon=True)
         self._thread.start()
 
@@ -198,7 +202,7 @@ class ProcessTreeTracker:
                 if not root_proc.is_running():
                     return
                 # PID reuse guard
-                if root_proc.create_time() != self.nodes[self.root_pid]["create_time"]:
+                if abs(root_proc.create_time() - self.nodes[self.root_pid]["create_time"]) > 2.0:
                     return
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 return

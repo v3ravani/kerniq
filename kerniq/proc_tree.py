@@ -85,7 +85,7 @@ class ProcessTreeTracker:
         task_id: str,
         storage: Optional[Any] = None,
         output_dir: Optional[Path] = None,
-        sampling_interval: float = 0.02
+        sampling_interval: float = 0.01
     ):
         self.root_pid = root_pid
         self.task_id = task_id

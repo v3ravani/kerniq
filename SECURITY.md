@@ -25,7 +25,7 @@ Please report vulnerabilities privately via either of the following channels:
 
 1. **Email (Direct Maintainer Contact):**
    Send full details to **Viraj Ravani** at:  
-   📧 `viraj.ravani@somaiya.edu`
+    `viraj.ravani@somaiya.edu`
 
 2. **GitHub Private Vulnerability Reporting:**
    If available on GitHub, submit an advisory through:  

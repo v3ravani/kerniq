@@ -7,8 +7,8 @@
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/kerniq/"><img src="https://img.shields.io/pypi/v/kerniq?color=blue" alt="PyPI Version"></a>
-  <a href="https://pypi.org/project/kerniq/"><img src="https://img.shields.io/pypi/pyversions/kerniq?color=3776AB" alt="Python Versions"></a>
+  <a href="https://pypi.org/project/kerniq/"><img src="https://img.shields.io/pypi/v/kerniq?logo=pypi&logoColor=white" alt="PyPI Version"></a>
+  <a href="https://pypi.org/project/kerniq/"><img src="https://img.shields.io/pypi/pyversions/kerniq?logo=python&logoColor=white" alt="Python Versions"></a>
   <a href="#telegram-bot-setup"><img src="https://img.shields.io/badge/Telegram-Integrated-2CA5E0?logo=telegram&logoColor=white" alt="Telegram Integration"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
   <a href="#system-requirements"><img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey" alt="Platform: Windows | Linux | macOS"></a>

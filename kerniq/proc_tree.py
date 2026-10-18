@@ -26,6 +26,18 @@ PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
 SYNCHRONIZE = 0x00100000
 
 
+def _extract_basename(path_str: str) -> str:
+    """Extract the filename/basename from a path across all platforms.
+    
+    Handles both Windows backslashes and POSIX forward slashes, regardless of the host OS.
+    """
+    clean = path_str.replace("\\", "/").rstrip("/")
+    if "/" in clean:
+        base = clean.rsplit("/", 1)[-1]
+        return base or path_str
+    return clean or path_str
+
+
 def get_process_display_name(name: str, cmdline: Optional[List[str]] = None, is_root: bool = False) -> str:
     """Determine a clear, readable display name for a process.
     
@@ -44,15 +56,15 @@ def get_process_display_name(name: str, cmdline: Optional[List[str]] = None, is_
             if arg.startswith("-"):
                 continue
             if arg.endswith(".py") or "\\" in arg or "/" in arg:
-                base = Path(arg).name
+                base = _extract_basename(arg)
                 if base:
                     return base
     elif "node" in name_lower and cmdline and len(cmdline) > 1:
         for arg in cmdline[1:]:
             if arg.startswith("-"):
                 continue
-            if arg.endswith((".js", ".mjs", ".cjs", ".ts")):
-                base = Path(arg).name
+            if arg.endswith((".js", ".mjs", ".cjs", ".ts")) or "\\" in arg or "/" in arg:
+                base = _extract_basename(arg)
                 if base:
                     return base
 
@@ -73,7 +85,7 @@ class ProcessTreeTracker:
         task_id: str,
         storage: Optional[Any] = None,
         output_dir: Optional[Path] = None,
-        sampling_interval: float = 0.08
+        sampling_interval: float = 0.05
     ):
         self.root_pid = root_pid
         self.task_id = task_id
@@ -166,6 +178,12 @@ class ProcessTreeTracker:
         self._thread.start()
 
     def _run_loop(self) -> None:
+        # Initial sample to capture early child processes
+        try:
+            self.sample()
+        except Exception:
+            pass
+
         while not self._stop_event.wait(timeout=self.sampling_interval):
             try:
                 self.sample()
@@ -694,7 +712,7 @@ def format_process_events(task: Dict[str, Any], tree_data: Optional[Dict[str, An
     else:
         st_iso = task.get("start_time")
         cmd = task.get("command", "task")
-        exe_name = Path(cmd.split()[0]).name if cmd else "process"
+        exe_name = _extract_basename(cmd.split()[0]) if cmd else "process"
         if st_iso:
             try:
                 st_dt = datetime.fromisoformat(st_iso.replace("Z", "+00:00"))

@@ -36,10 +36,12 @@ def test_process_display_name_helpers():
     # Python scripts for child processes
     assert get_process_display_name("python.exe", ["python", "data_loader.py"], is_root=False) == "data_loader.py"
     assert get_process_display_name("python.exe", ["python", "C:\\path\\to\\worker.py", "--arg"], is_root=False) == "worker.py"
+    assert get_process_display_name("python.exe", ["python", "/unix/path/to/worker.py", "--arg"], is_root=False) == "worker.py"
     assert get_process_display_name("python.exe", ["python", "-c", "print(1)"], is_root=False) == "python.exe"
 
     # Node scripts
     assert get_process_display_name("node.exe", ["node", "server.js"], is_root=False) == "server.js"
+    assert get_process_display_name("node.exe", ["node", "C:\\path\\to\\server.js"], is_root=False) == "server.js"
 
 
 def test_tree_cli_arguments_validation(capsys):
@@ -232,10 +234,10 @@ def test_tree_child_exits_before_task_finishes(capsys):
     # Parent launches one child that exits quickly, and another that runs longer
     script = (
         "import subprocess, sys, time\n"
-        "p_short = subprocess.Popen([sys.executable, '-c', 'import sys; sys.exit(0)'])\n"
+        "p_short = subprocess.Popen([sys.executable, '-c', 'import time, sys; time.sleep(0.15); sys.exit(0)'])\n"
         "p_short.wait()\n"
-        "time.sleep(0.3)\n"
-        "p_long = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(0.2)'])\n"
+        "time.sleep(0.2)\n"
+        "p_long = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(0.25)'])\n"
         "p_long.wait()\n"
     )
     ret = main(["record", "--command", sys.executable, "-c", script])

@@ -234,10 +234,10 @@ def test_tree_child_exits_before_task_finishes(capsys):
     # Parent launches one child that exits quickly, and another that runs longer
     script = (
         "import subprocess, sys, time\n"
-        "p_short = subprocess.Popen([sys.executable, '-c', 'import sys; sys.exit(0)'])\n"
+        "p_short = subprocess.Popen([sys.executable, '-c', 'import time, sys; time.sleep(0.15); sys.exit(0)'])\n"
         "p_short.wait()\n"
-        "time.sleep(0.3)\n"
-        "p_long = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(0.2)'])\n"
+        "time.sleep(0.2)\n"
+        "p_long = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(0.25)'])\n"
         "p_long.wait()\n"
     )
     ret = main(["record", "--command", sys.executable, "-c", script])

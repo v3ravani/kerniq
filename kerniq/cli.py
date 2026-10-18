@@ -272,8 +272,8 @@ def cmd_help(telegram_menu: bool = False, telegram_only: bool = False, shell_onl
                 "syntax": "/running",
                 "desc": "Display currently active supervised tasks with inline control buttons (Stop / View Output).",
                 "options": [
-                    ("🛑 Stop Task", "Terminate active monitored task immediately"),
-                    ("📄 View Output", "Fetch live captured stdout/stderr log tail"),
+                    ("Stop Task", "Terminate active monitored task immediately"),
+                    ("View Output", "Fetch live captured stdout/stderr log tail"),
                 ],
                 "example": "/running",
             },
@@ -281,8 +281,8 @@ def cmd_help(telegram_menu: bool = False, telegram_only: bool = False, shell_onl
                 "syntax": "/report <id>",
                 "desc": "Display comprehensive report (output excerpt, exit code, timestamps, process events, process tree, resource consumption) with report download button.",
                 "options": [
-                    ("📥 Download", "Send exported report document (json/csv/pdf) directly to chat"),
-                    ("🌲 Process Tree", "Display interactive process hierarchy tree in chat"),
+                    ("Download", "Send exported report document (json/csv/pdf) directly to chat"),
+                    ("Process Tree", "Display interactive process hierarchy tree in chat"),
                 ],
                 "example": "/report KQ-1042",
             },
@@ -1219,7 +1219,7 @@ def cmd_cleanup(keep_count: Optional[int] = None) -> int:
 
 def cmd_reset(force: bool = False) -> int:
     """Completely reset Kerniq: delete all history, tokens, user IDs, logs, and configuration."""
-    print(red("⚠️  WARNING: Full Destructive Reset"))
+    print(red("WARNING: Full Destructive Reset"))
     print("This command will permanently erase EVERYTHING in Kerniq and start from scratch:")
     print("  • Stored Telegram bot token and credentials (keyring & credentials file)")
     print("  • All authorized Telegram users and permissions")

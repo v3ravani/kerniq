@@ -32,3 +32,6 @@ Thumbs.db
 .kerniq/
 *.db
 *.log
+kerniq_*_export.*
+kerniq_report_*.*
+*.pdf

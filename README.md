@@ -396,7 +396,7 @@ kerniq ping telegram
 - `kerniq ping telegram --id <user_id>`: Send test ping directly to a specific user.
 - `kerniq ping telegram --all`: Send test ping to all configured users simultaneously.
 
-You should receive a `🧪 [Kerniq] Ping Test` message directly in Telegram.
+You should receive a `[Kerniq] Ping Test` message directly in Telegram.
 
 ### Step 6: Start the Persistent Listener
 
@@ -723,21 +723,21 @@ All standard CLI commands work directly inside `kerniq shell` (with or without t
 
 When either the background listener daemon (`kerniq start listener`) or the interactive shell (`kerniq shell`) is active, authorized users can send commands directly to the Telegram bot.
 
-> **Note on Telegram Inline Buttons:** All inline buttons (`🛑 Stop Task`, `📄 View Output`, `🌲 Process Tree`, `📥 Download Report`, etc.) function only while the listener daemon or interactive shell is active. If the listener is off, inline buttons will not respond.
+> **Note on Telegram Inline Buttons:** All inline buttons (Stop Task, View Output, Process Tree, Download Report, etc.) function only while the listener daemon or interactive shell is active. If the listener is off, inline buttons will not respond.
 
 ### Supported Slash Commands
 
 | Command | Minimum Tier | Description | Example Reply |
 |---|---|---|---|
-| `/running` | `readonly` | Displays currently running monitored tasks with elapsed durations and inline control buttons (`🛑 Stop Task`, `📄 View Output`). | `🏃 Monitored Running Tasks (1): KQ-1042` |
-| `/report <id>` | `readonly` | Displays comprehensive report (output excerpt, exit code, timestamps, process events, process tree, resource consumption) with an inline `📥 Download Report` button that delivers the exported file directly to your chat and a `🌲 Process Tree` button. | `📋 Task Report - KQ-1042` |
+| `/running` | `readonly` | Displays currently running monitored tasks with elapsed durations and inline control buttons (`Stop Task`, `View Output`). | `Monitored Running Tasks (1): KQ-1042` |
+| `/report <id>` | `readonly` | Displays comprehensive report (output excerpt, exit code, timestamps, process events, process tree, resource consumption) with an inline `Download Report` button that delivers the exported file directly to your chat and a `Process Tree` button. | `Task Report - KQ-1042` |
 | `/history` | `readonly` | Displays recent task history records with duration and status. | `• KQ-1042 [completed]: pytest (code 0, 4.2s)` |
-| `/status` | `readonly` | Displays host name, device ID, battery level, shell activity, and listener daemon state. | `💻 Kerniq Status - workstation` |
+| `/status` | `readonly` | Displays host name, device ID, battery level, shell activity, and listener daemon state. | `Kerniq Status - workstation` |
 | `/devices` | `readonly` | Displays recognized device identity, ID mode, and online status. | `• workstation (Current Device)` |
 | `/rules` | `readonly` | Displays effective notification rules and active thresholds. | Clean list of 12 rules and 5 thresholds. |
 | `/help` | `readonly` | Displays supported commands and your active permission tier. | List of commands with tier details. |
 | `/output <id>` | `readonly` | Retrieves the captured stdout and stderr log tail for task `<id>`. | Log excerpts in fenced markdown blocks. |
-| `/stop <id>` | `control` | Requests graceful termination of running task `<id>`. | `✅ Task KQ-1042 terminated successfully.` |
+| `/stop <id>` | `control` | Requests graceful termination of running task `<id>`. | `Task KQ-1042 terminated successfully.` |
 | `/about` | `readonly` | Displays version and developer attribution (*Developed by [Viraj Ravani](https://virajravani.in)*). | `Kerniq 1.0.0 - Developed by Viraj Ravani` |
 | `/tree <id>` | `readonly` | Displays process hierarchy tree and per-process CPU/RAM details. | Monospaced process tree hierarchy. |
 | `/events <id>` | `readonly` | Displays chronological process lifecycle events (started, spawned, exited). | `10:42:15 python.exe started PID 4100` |
@@ -747,10 +747,10 @@ When either the background listener daemon (`kerniq start listener`) or the inte
 
 When a task starts, requests interactive input, or finishes, Kerniq attaches inline action buttons directly to the Telegram notification:
 
-- `🛑 Stop Task`: Immediately triggers process tree termination (requires `control` permission).
-- `📄 View Output`: Fetches the latest captured stdout/stderr log tail directly in Telegram.
-- `🌲 Process Tree`: Fetches the live process tree hierarchy and resource utilization.
-- `📥 Download Report`: Generates and sends a downloadable task report document (`json`, `csv`, or `pdf` based on advanced config) directly to your Telegram chat.
+- `Stop Task`: Immediately triggers process tree termination (requires `control` permission).
+- `View Output`: Fetches the latest captured stdout/stderr log tail directly in Telegram.
+- `Process Tree`: Fetches the live process tree hierarchy and resource utilization.
+- `Download Report`: Generates and sends a downloadable task report document (`json`, `csv`, or `pdf` based on advanced config) directly to your Telegram chat.
 
 Button callbacks strictly verify the user ID and permission level on every press.
 
@@ -899,7 +899,7 @@ When a prompt is detected, Kerniq immediately triggers a high-priority Telegram 
 
 ### Process Tree Termination
 
-When a task termination is requested (via `/stop <ID>`, the inline `🛑 Stop Task` button, or the shell `stop` command):
+When a task termination is requested (via `/stop <ID>`, the inline Stop Task button, or the shell `stop` command):
 1. Kerniq looks up the root process PID in the SQLite database.
 2. Uses `psutil` to discover all child and descendant subprocesses recursively.
 3. Sends `SIGTERM` (or calls `TerminateProcess` on Windows) to all descendants and the root parent.
@@ -932,7 +932,7 @@ Kerniq displays:
 - Captured stdout content with terminal ANSI control code sanitization.
 - Captured stderr content (if any errors were emitted).
 
-From Telegram, authorized users can view log excerpts with `/output <id>` or by tapping `📄 View Output`.
+From Telegram, authorized users can view log excerpts with `/output <id>` or by tapping View Output.
 
 ### Process Tree Inspection
 
@@ -1183,7 +1183,7 @@ kerniq_new/
 
 - **Local-First Guarantee:** Your source code, command-line arguments, environment variables, task records, and output files stay strictly on your local machine. Kerniq contains no telemetry, tracking, or third-party analytics.
 - **Encrypted Credential Protection:** Telegram bot tokens and user IDs are **never stored unencrypted on disk**. Sensitive credentials are encrypted using AES-CBC/HMAC-SHA256 (Fernet) bound to the local user environment.
-- **Explicit Notification Routing:** Notifications are transmitted only to the official Telegram Bot API (`api.telegram.org`) over TLS. Output log content is never broadcast automatically; only high-level status summaries are sent unless an authorized user explicitly requests logs via `/output <id>` or the `📄 View Output` button.
+- **Explicit Notification Routing:** Notifications are transmitted only to the official Telegram Bot API (`api.telegram.org`) over TLS. Output log content is never broadcast automatically; only high-level status summaries are sent unless an authorized user explicitly requests logs via `/output <id>` or the View Output button.
 - **Strict User Authorization:** Kerniq verifies the sender's immutable numeric Telegram user ID on every incoming command and inline button click. Requests from unknown IDs are rejected and logged.
 - **Command Synchronization Option:** When adding or verifying your Telegram bot token, Kerniq provides an option to synchronize official commands with the Telegram Bot API so commands populate directly in the Telegram interface.
 - **Terminal Injection Protection:** All output viewed through `kerniq <id> --output` or forwarded to Telegram passes through ANSI escape sanitization to prevent terminal control sequence attacks.
@@ -1201,7 +1201,7 @@ kerniq_new/
 | Telegram command returns `Access denied` | Sender's Telegram user ID is not registered or unauthorized. | Find your numeric ID via `@userinfobot` and add it via `kerniq config users`. |
 | Telegram command returns `Feature restricted` | User is configured as `notifications` or `readonly` tier. | Run `kerniq config users` and select `[2] Change user permission tier` to upgrade to `control`. |
 | Remote Telegram commands do not respond | Neither the interactive shell nor background listener is running. | Start the background listener with `kerniq start listener` (or enter `kerniq shell`). Verify with `kerniq listener status`. |
-| Command hangs waiting for input | Subprocess is waiting for user confirmation or credentials. | Telegram sends an input alert. Open the terminal to enter input, or terminate the task using `🛑 Stop Task`. |
+| Command hangs waiting for input | Subprocess is waiting for user confirmation or credentials. | Telegram sends an input alert. Open the terminal to enter input, or terminate the task using Stop Task. |
 | `[WinError 2] The system cannot find the file specified` | Command or executable does not exist in system `PATH`. | Verify the command name and ensure the executable is installed and accessible. |
 | Background listener daemon crashed | Missing dependencies or Python executable changed. | Check `~/.kerniq/daemon.log` for stack traces. Restart with `kerniq start listener`. |
 
